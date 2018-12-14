@@ -7,12 +7,49 @@
 #include <time.h>
 #include <sys/sysinfo.h>
 #include <sys/wait.h>
+#include <sched.h>
+
+#define _GNU_SOURCE
+#define PARENT_PRIORITY	 	5	
+#define HIGH_PRIORITY		4
+#define MIDDLE_PRIORITY		3
+#define LOW_PRIORITY		2
 
 int main(void){
+
+
     int count = 0;
     int n_filhos = 10;
     pid_t pai = getpid();
     clock_t begin_pai = clock();
+
+
+
+	/*
+	 * The following structure is used to set a processes priority
+	 */
+  	struct sched_param param;
+    
+    //#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+	/*
+	 * Set the scheduler to the Round Robin scheduler
+	*/
+	
+
+	param.sched_priority = 0;
+	if( sched_setscheduler( 0, SCHED_OTHER, &param ) == -1 ) {
+		fprintf(stderr,"error setting scheduler ... are you root?\n");
+		exit(1);
+	}
+
+	//printf("Parent prio = %d\n", getpriority(PRIO_PROCESS, 0));
+	//sched_getparam(0, &param); 
+	//printf("Parent sched prio = %d\n", param.sched_priority);
+
+
+
+
+
     // printf("Pai, pid: %d\n",pai);
     while (count < n_filhos){
         if (getpid() == pai){
@@ -45,22 +82,3 @@ int main(void){
     
     return 0;
 }
-
-// int main(void){
-//     clock_t begin = clock();
-
-//     for (int i = 0; i < 999999; i++){
-//         for (int j = 0; j < 1000; j++){
-//             rand();
-//             // sqrt(r);
-//         }
-//     }
-
-//     clock_t end = clock();
-
-//     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-//     printf("time: %f\n", time_spent);
-
-//     return 0;
-// }
