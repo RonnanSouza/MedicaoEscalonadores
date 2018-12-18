@@ -14,28 +14,43 @@
  */
 #define SCHED_BATCH 3 
 
-#define PARENT_PRIORITY	 	5	
-#define HIGH_PRIORITY		4
-#define MIDDLE_PRIORITY		3
-#define LOW_PRIORITY		2
+void get_scheduler(pid_t pid) {
+    
+    int p_id = (int) pid;
+    char command[100];
 
-void show_sched() {
-    switch( sched_getscheduler(getpid()) ) {
+    char *command_pattern = "chrt -p "; //getting value from a function
+    sprintf(command, "%s%d", command_pattern, p_id ); 
+    system(command);
+}
+
+
+void set_scheduler(pid_t pid, int sched_type) {
+
+    int p_id = (int) pid;
+    char command[100];
+    char *command_pattern;
+
+    switch( sched_type ) {
         case SCHED_OTHER :
-            printf("The current scheduler is SCHED_OTHER.\n");
+            command_pattern = "sudo chrt --other -p 0 "; // SCHED_OTHER scheduling policy
             break;
         case SCHED_BATCH :
-            printf("The current scheduler is SCHED_BATCH.\n");
+            command_pattern = "sudo chrt --batch -p 0 "; // SCHED_BATCH scheduling policy       
             break;
         case SCHED_FIFO  :
-            printf("The current scheduler is SCHED_FIFO.\n");
+            command_pattern = "sudo chrt --fifo -p 1 "; // SCHED_FIFO scheduling policy
             break;
-    }    
+    } 
+    
+    sprintf(command, "%s%d", command_pattern, p_id ); 
+    system(command);   
 }
+
 
 int main(int argc, char *argv[]) {
     int count = 0;
-    int n_filhos = 10;
+    int n_filhos = 1;
     int sched_type = 0;
     pid_t pai = getpid();
     clock_t begin_pai = clock();
@@ -49,36 +64,15 @@ int main(int argc, char *argv[]) {
     } 
 
     printf("--------- Beginning of test ---------\n");
-    show_sched();
 
-	/*
-	 * The following structure is used to set a processes priority
-	 */
-  	struct sched_param param;
-    //#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-	
-	/*
-	 * Set the scheduler to the Round Robin scheduler
-	 */
-	param.sched_priority = 0;
-	if( sched_setscheduler( pai, sched_type, &param ) == -1 ) {
-		printf("error setting scheduler ... are you root?\n");
-        printf("--------- Ending of test ------------\n\n");
-		exit(1);
-	}
+    get_scheduler(pai);
+    set_scheduler(pai, sched_type);
+    get_scheduler(pai);
 
-	//printf("Parent prio = %d\n", getpriority(PRIO_PROCESS, 0));
-	//sched_getparam(0, &param); 
-	//printf("Parent sched prio = %d\n", param.sched_priority);
-    show_sched();
-
-
-    // printf("Pai, pid: %d\n",pai);
     while (count < n_filhos){
         if (getpid() == pai){
             pid_t filho = fork();
             if (filho == 0){
-                // printf("Filho %d, pid: %d\n",count, getpid());
                 clock_t begin = clock();
                 for (int i = 0; i < 999999; i++){
                     for (int j = 0; j < 1000; j++){
