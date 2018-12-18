@@ -42,7 +42,7 @@ void set_scheduler(pid_t pid, int sched_type) {
             command_pattern = "sudo chrt --fifo -p 1 "; // SCHED_FIFO scheduling policy
             break;
     } 
-    
+    printf("---------- Changing policy ----------\n");
     sprintf(command, "%s%d", command_pattern, p_id ); 
     system(command);   
 }
@@ -50,7 +50,7 @@ void set_scheduler(pid_t pid, int sched_type) {
 
 int main(int argc, char *argv[]) {
     int count = 0;
-    int n_filhos = 1;
+    int n_filhos = 10;
     int sched_type = 0;
     pid_t pai = getpid();
     clock_t begin_pai = clock();
