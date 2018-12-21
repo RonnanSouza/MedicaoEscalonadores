@@ -42,18 +42,21 @@ void set_scheduler(pid_t pid, int sched_type) {
             command_pattern = "sudo chrt --fifo -p 1 "; // SCHED_FIFO scheduling policy
             break;
     } 
-    //printf("---------- Changing policy ----------\n");
     sprintf(command, "%s%d", command_pattern, p_id ); 
     system(command);   
 }
 
-
 void main(int argc, char *argv[]) {
+	
+	char *p;							 // convert to int
+	long aux = strtol(argv[2], &p, 10); // convert to int
+    int n_filhos = aux;
     int count = 0;
-    int n_filhos = 10;
     int sched_type = 0;
+
     pid_t pai = getpid();
     clock_t begin_pai = clock();
+
 
     if(strcmp(argv[1],"OTHER")==0) {
         sched_type = SCHED_OTHER;
@@ -63,10 +66,7 @@ void main(int argc, char *argv[]) {
         sched_type = SCHED_FIFO;
     } 
 
-
-    //get_scheduler(pai);
     set_scheduler(pai, sched_type);
-    //get_scheduler(pai);
 
     while (count < n_filhos){
         if (getpid() == pai){
@@ -79,8 +79,11 @@ void main(int argc, char *argv[]) {
                     }
                 }
                 clock_t end = clock();
+
                 double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-                printf("%f %d %s\n", time_spent, count, argv[1]);
+                double time_begin = (double)(begin) / CLOCKS_PER_SEC;
+                double time_end = (double)(end) / CLOCKS_PER_SEC;            
+                printf("%f %f %f %d %d PROCESSO_%d %s\n", time_spent, time_begin, time_end, n_filhos, (count+1), n_filhos, argv[1]);
                 break;
             }
             
