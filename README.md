@@ -2,7 +2,7 @@
 Medição de desempenho de uma carga de trabalho usando diferentes escalonadores no linux
 
 ## Execução na máquina
-- Para executar visualizar a saída, via terminal, basta executar *gcc main_1.c -o main_1* e depois *./main nome_escalonador*
+- Para executar visualizar a saída, via terminal, basta executar *gcc main_1.c -o main_1* e depois *./main nome_escalonador numero_de_processos*
 
 ## Obtenção do gráfico
 - Primeiramente, basta executar *./run.sh* (pode ser necessário o comando *chmod +777 run.sh*)

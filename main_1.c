@@ -83,7 +83,7 @@ void main(int argc, char *argv[]) {
                 double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
                 double time_begin = (double)(begin) / CLOCKS_PER_SEC;
                 double time_end = (double)(end) / CLOCKS_PER_SEC;            
-                printf("%f %f %f %d %d PROCESSO_%d %s\n", time_spent, time_begin, time_end, n_filhos, (count+1), n_filhos, argv[1]);
+                printf("%f %f %f %d %d PROCESSO_%d %s\n", time_spent, time_begin, time_end, n_filhos, (count+1), (count+1), argv[1]);
                 break;
             }
             
